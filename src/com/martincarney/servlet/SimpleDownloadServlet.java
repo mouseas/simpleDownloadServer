@@ -103,7 +103,7 @@ public class SimpleDownloadServlet extends HttpServlet {
 		}
 		
 		// swap url path separators for file system path separators
-		filename = filename.replaceAll("/", File.pathSeparator);
+		filename = filename.replace('/', File.separatorChar);
 		
 		return filename;
 	}
