@@ -38,8 +38,16 @@ public class SimpleDownloadServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String filename = extractRequestedFilename(request);
 		
+		String ip = request.getHeader("X-FORWARDED-FOR");
+		if (ip == null) {
+			ip = request.getRemoteAddr();
+		}
+		System.out.print(ip + " requesteded file \"" + filename + "\"");
+		
 		File requestedFile = new File(BASE_FILE_FOLDER + filename);
 		if (requestedFile.exists() && requestedFile.isFile() && isValidFileName(requestedFile.getName())) {
+			System.out.println(" - request successful.");
+			
 			// get file's mime type, and put that in response (default to bin file type if none)
 			String mimeType = getServletContext().getMimeType(requestedFile.getName());
 			if (mimeType == null) {
@@ -54,6 +62,7 @@ public class SimpleDownloadServlet extends HttpServlet {
 			// send the file's data
 			sendFileData(response, requestedFile);
 		} else {
+			System.out.println(" - request failed.");
 			response.sendError(HttpServletResponse.SC_NOT_FOUND, "Requested file was not found.");
 		}
 	}
